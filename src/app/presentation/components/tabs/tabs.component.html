@@ -1,0 +1,14 @@
+
+  <ion-tabs>
+
+    <ion-tab-bar slot="bottom" translucent="true">
+      @for (item of menuItems; track $index) {
+        <ion-tab-button [tab]="item.title" [href]="item.url">
+          <ion-icon  [name]="item.icon" ></ion-icon>
+          {{item.title}}
+        </ion-tab-button>
+    
+      }
+    </ion-tab-bar>
+  </ion-tabs>
+o
