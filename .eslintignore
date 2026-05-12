@@ -1,0 +1,36 @@
+# Build outputs
+dist
+www
+build
+.angular
+coverage
+
+# Dependencies
+node_modules
+
+# Native platforms
+android
+ios
+
+# Configuration files
+*.config.js
+*.config.ts
+karma.conf.js
+
+# Generated files
+*.spec.ts
+
+# Logs
+*.log
+
+# Other
+.DS_Store
+
+# HTML files
+*.html
+
+# Ignore everything except src/app
+/*
+!/src
+/src/*
+!/src/app
