@@ -9,10 +9,8 @@ import { TabsComponent } from '../../components/tabs/tabs.component';
   templateUrl: './tasks.page.html',
   styleUrls: ['./tasks.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, TabsComponent],
+  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule],
 })
-export class TasksPage implements OnInit {
+export class TasksPage {
   constructor() {}
-
-  ngOnInit() {}
 }
