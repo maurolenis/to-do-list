@@ -1,0 +1,13 @@
+ion-item {
+  padding: 1rem;
+  --inner-border-width: 0;
+  border-radius: 8px;
+  width: 100%;
+  border: 1px solid;
+  border-color: var(--category-color);
+  ion-icon.avatar {
+    font-size: 24px;
+    --ion-color-base: var(--category-color);
+    color: var(--category-color);
+  }
+}

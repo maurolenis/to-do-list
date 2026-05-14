@@ -1,0 +1,27 @@
+<ion-grid>
+  <ion-item style="--padding-start: 12px">
+    <ion-label>{{ label }}</ion-label>
+  </ion-item>
+  <ion-row>
+    @for (item of items; track item.id) {
+      <ion-col size="6">
+        <ion-card
+          [class.selected]="selectedItem === item.id"
+          [class.disabled]="disabled"
+          [style.--category-color]="'#0054e9'"
+          (click)="selectItem(item.id)"
+          button="true"
+        >
+          <ion-card-content>
+            @if (item.icon !== 'ellipse') {
+              <ion-icon [name]="item.icon" size="large"></ion-icon>
+            } @else {
+              <ion-icon [name]="item.icon" size="large" [style.color]="item.color"></ion-icon>
+            }
+            <p>{{ item.name }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    }
+  </ion-row>
+</ion-grid>

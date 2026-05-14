@@ -1,0 +1,52 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="#"></ion-back-button>
+    </ion-buttons>
+    <ion-title>NUEVA TAREA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="form">
+    <ion-header collapse="condense">
+      <ion-toolbar>
+        <ion-title size="large">NUEVA TAREA </ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <p style="padding: 1rem; text-align: justify">
+      Crea una nueva tarea para organizar tu día. Digita un nombre y selecciona una categoría que te
+      ayuden a identificarla fácilmente.
+    </p>
+    <ion-card>
+      <ion-card-content>
+        <ion-item>
+          <ion-input
+            label="NOMBRE"
+            label-placement="floating"
+            fill="outline"
+            placeholder="Digite el nombre"
+            formControlName="name"
+          ></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <ion-card-content>
+        <app-item-picker
+          label="CATEGORIA"
+          [items]="categoryOptions"
+          formControlName="category"
+        ></app-item-picker>
+      </ion-card-content>
+    </ion-card>
+    <ion-button
+      (click)="onSubmit()"
+      style="padding: 1rem"
+      expand="block"
+      color="primary"
+      [disabled]="form.invalid"
+      >GUARDAR</ion-button
+    >
+  </form>
+</ion-content>

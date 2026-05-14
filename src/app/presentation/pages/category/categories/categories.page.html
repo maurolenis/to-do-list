@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>CATEGORIAS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">CATEGORIAS</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navigateToCategoryCreation()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <ion-col>
+    @for (item of categories; track $index) {
+    <ion-card>
+      <ion-row style="display: flex">
+        <ion-item [style.--category-color]="item.color">
+          <ion-icon class="avatar" slot="start" [name]="item.icon" [color]="item.color"></ion-icon>
+          <ion-label>{{ item.name }}</ion-label>
+          <ion-button
+            size="default"
+            slot="end"
+            color="secondary"
+            fill="clear"
+            (click)="navigateToCategoryCreation(item.id)"
+          >
+            <ion-icon slot="icon-only" name="pencil"></ion-icon>
+          </ion-button>
+          <ion-button
+            size="default"
+            slot="end"
+            color="danger"
+            fill="clear"
+            (click)="showDeleteConfirmation(item)"
+          >
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ion-row>
+    </ion-card>
+    }@empty { }
+  </ion-col>
+</ion-content>

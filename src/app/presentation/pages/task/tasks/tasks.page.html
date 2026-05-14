@@ -1,0 +1,92 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>LISTA DE TAREAS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">LISTA DE TAREAS</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="navigateToTaskCreation()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <div class="ion-padding">
+    <ion-button expand="block" fill="outline" id="abrir-filtros">
+      <ion-icon name="options-outline" slot="start"></ion-icon>
+      Filtrar por categoria
+    </ion-button>
+  </div>
+  @for (item of tasksGroup; track $index) {
+  <ion-card class="category" [style.--category-color]="item.category.color">
+    <ion-card-content>
+      <ion-accordion-group>
+        <ion-accordion value="first">
+          <ion-item slot="header">
+            <ion-icon
+              class="avatar"
+              slot="start"
+              [name]="item.category.icon"
+              [color]="item.category.color"
+            ></ion-icon>
+            <ion-label class="category-name"> {{item.category.name}} </ion-label>
+            <ion-badge>{{item.tasks.length}}</ion-badge>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            @for (task of item.tasks; track $index) {
+
+            <ion-item>
+              <ion-checkbox
+                [checked]="task.completed"
+                (ionChange)="toggleTaskCompletion(task.id)"
+                slot="start"
+              ></ion-checkbox>
+              <ion-label [ngClass]=" {'completed': task.completed} ">{{task.title}}</ion-label>
+              <ion-button
+                size="default"
+                slot="end"
+                color="danger"
+                fill="clear"
+                (click)="showDeleteConfirmation(task)"
+              >
+                <ion-icon slot="icon-only" name="trash"></ion-icon>
+              </ion-button>
+            </ion-item>
+            }
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-card-content>
+  </ion-card>
+  }
+</ion-content>
+
+<ion-modal trigger="abrir-filtros" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.25, 0.5, 0.75]">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>Filtrar por</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="ion-padding">
+      <ion-list>
+        <ion-item button (click)="clearCategoryFilter()">
+          <ion-icon name="grid-outline" slot="start"></ion-icon>
+          <ion-label>Todas las tareas</ion-label>
+        </ion-item>
+        @for (cat of intialData; track $index) {
+
+        <ion-item button (click)="filterTasksByCategory(cat.category.id)">
+          <ion-icon [name]="cat.category.icon" slot="start"></ion-icon>
+          <ion-label>{{ cat.category.name }}</ion-label>
+        </ion-item>
+        }
+      </ion-list>
+    </ion-content>
+  </ng-template>
+</ion-modal>

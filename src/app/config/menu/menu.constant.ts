@@ -1,13 +1,13 @@
 export const MENU_ITEMS = [
   {
-    title: 'Tasks',
-    url: '/tasks',
+    title: 'TAREAS',
+    url: 'tasks',
     icon: 'list',
     available: true,
   },
   {
-    title: 'Categories',
-    url: '/categories',
+    title: 'CATEGORÍAS',
+    url: 'categories',
     icon: 'folder',
     available: true,
   },

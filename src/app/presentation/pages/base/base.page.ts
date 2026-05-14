@@ -1,28 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { RouterOutlet } from '@angular/router';
-import { TabsComponent } from '../../components/tabs/tabs.component';
+import { IonTabBar, IonTabButton, IonTabs, IonIcon } from '@ionic/angular/standalone';
+import { MENU_ITEMS } from 'src/app/config/menu/menu.constant';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.page.html',
   styleUrls: ['./base.page.scss'],
   standalone: true,
-  imports: [
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    CommonModule,
-    FormsModule,
-    RouterOutlet,
-    TabsComponent,
-  ],
+  imports: [CommonModule, FormsModule, IonTabs, IonIcon, IonTabBar, IonTabButton],
 })
-export class BasePage implements OnInit {
-  constructor() {}
-
-  ngOnInit() {}
+export class BasePage {
+  public menuItems = MENU_ITEMS;
 }

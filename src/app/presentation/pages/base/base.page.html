@@ -1,14 +1,17 @@
-<ion-header [translucent]="true">
+<!-- <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>base</ion-title>
+    <ion-title>TO-DO-LIST</ion-title>
   </ion-toolbar>
-</ion-header>
+</ion-header> -->
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">base</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <router-outlet></router-outlet>
-</ion-content>
+<ion-tabs>
+  <ion-tab-bar slot="bottom" translucent="true">
+    @for (item of menuItems; track $index) {
+    <ion-tab-button [tab]="item.url">
+      <ion-icon [name]="item.icon"></ion-icon>
+      {{ item.title }}
+    </ion-tab-button>
+    }
+  </ion-tab-bar>
+</ion-tabs>
+o
