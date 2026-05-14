@@ -1,4 +1,4 @@
-// domain/use-cases/category.use-cases.ts
+import { TaskRepository } from 'src/app/domain/repositories/task.repository';
 import { Injectable, inject } from '@angular/core';
 import { Observable, throwError, switchMap, map } from 'rxjs';
 import { Category } from '../entities/category.entity';
@@ -7,6 +7,7 @@ import { CategoryRepository } from '../repositories/category.repository';
 @Injectable({ providedIn: 'root' })
 export class CategoryUseCases {
   private repository = inject(CategoryRepository);
+  private taskRepository = inject(TaskRepository);
 
   getCategories(): Observable<Category[]> {
     return this.repository.getCategories();
@@ -59,7 +60,16 @@ export class CategoryUseCases {
         if (!category) {
           return throwError(() => new Error('Category not found'));
         }
-        return this.repository.deleteCategory(id);
+        return this.taskRepository.getTasks().pipe(
+          switchMap(tasks => {
+            if (tasks.some(t => t.categoryId === id)) {
+              return throwError(
+                () => new Error('No se puede eliminar una categoría con tareas asociadas')
+              );
+            }
+            return this.repository.deleteCategory(id);
+          })
+        );
       })
     );
   }

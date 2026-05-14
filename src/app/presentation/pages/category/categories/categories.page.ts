@@ -15,12 +15,17 @@ import {
   IonButton,
   IonItem,
   IonLabel,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
 } from '@ionic/angular/standalone';
 import { Router } from '@angular/router';
 import { Category } from 'src/app/domain/entities/category.entity';
 import { CategoryUseCases } from 'src/app/domain/use-cases/category.use-cases';
 import { AlertService } from 'src/app/presentation/services/alert.service';
 import { ToastService } from 'src/app/presentation/services/toast.service';
+import { EmptyStateComponent } from 'src/app/presentation/components/empty-state/empty-state.component';
+import { RemoteConfigService } from 'src/app/config/services/remote-config.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-categories',
@@ -28,6 +33,8 @@ import { ToastService } from 'src/app/presentation/services/toast.service';
   styleUrls: ['./categories.page.scss'],
   standalone: true,
   imports: [
+    IonInfiniteScrollContent,
+    IonInfiniteScroll,
     IonContent,
     IonHeader,
     IonTitle,
@@ -43,6 +50,7 @@ import { ToastService } from 'src/app/presentation/services/toast.service';
     IonItem,
     IonLabel,
     IonButton,
+    EmptyStateComponent,
   ],
 })
 export class CategoriesPage {
@@ -50,21 +58,34 @@ export class CategoriesPage {
   private categoryService = inject(CategoryUseCases);
   private alertService = inject(AlertService);
   private toastService = inject(ToastService);
+  private remoteConfigService = inject(RemoteConfigService);
+  private $destroy = new Subject<void>();
+  public enableEdit = false;
   public categories: Category[] = [];
-  ionViewWillEnter() {
+  public categoriesShown: Category[] = [];
+  async ionViewWillEnter() {
+    await this.loadFeatureFlags();
     this.loadCategories();
   }
 
+  private async loadFeatureFlags() {
+    this.enableEdit = await this.remoteConfigService.getFeatureFlag('enable_edit_category');
+  }
+
   private loadCategories() {
-    this.categoryService.getCategories().subscribe({
-      next: categories => {
-        this.categories = categories;
-      },
-      error: err => {
-        this.toastService.showToast('Error al cargar las categorías', 'error');
-        console.error('Error fetching categories:', err);
-      },
-    });
+    this.categoryService
+      .getCategories()
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: categories => {
+          this.categories = categories;
+          this.generateItemsToShow(true);
+        },
+        error: err => {
+          this.toastService.showToast('Error al cargar las categorías', 'danger');
+          console.error('Error fetching categories:', err);
+        },
+      });
   }
 
   public navigateToCategoryCreation(id?: string) {
@@ -83,18 +104,40 @@ export class CategoriesPage {
   }
 
   private deleteCategory(category: Category) {
-    this.categoryService.deleteCategory(category.id).subscribe({
-      next: () => {
-        this.toastService.showToast(
-          `Categoría "${category.name}" eliminada exitosamente`,
-          'success'
-        );
-        this.loadCategories();
-      },
-      error: err => {
-        this.toastService.showToast('Error al eliminar la categoría', 'error');
-        console.error('Error deleting category:', err);
-      },
-    });
+    this.categoryService
+      .deleteCategory(category.id)
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: () => {
+          this.toastService.showToast(
+            `Categoría "${category.name}" eliminada exitosamente`,
+            'success'
+          );
+          this.loadCategories();
+        },
+        error: err => {
+          this.toastService.showToast('Error al eliminar la categoría', 'danger');
+          console.error('Error deleting category:', err);
+        },
+      });
+  }
+  private generateItemsToShow(initial: boolean = false) {
+    const itemsPerPage = 5;
+    const currentLength = initial ? 0 : this.categoriesShown.length;
+    const nextItems = this.categories.slice(currentLength, currentLength + itemsPerPage);
+    this.categoriesShown = initial ? nextItems : [...this.categoriesShown, ...nextItems];
+  }
+
+  onIonInfinite(event: any) {
+    setTimeout(() => {
+      this.generateItemsToShow();
+      event.target.complete();
+    }, 500);
+  }
+
+  ionViewWillLeave() {
+    this.$destroy.next();
+    this.$destroy.complete();
+    this.$destroy = new Subject<void>();
   }
 }

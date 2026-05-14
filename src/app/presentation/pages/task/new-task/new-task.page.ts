@@ -26,6 +26,7 @@ import { Category } from 'src/app/domain/entities/category.entity';
 import { CategoryUseCases } from 'src/app/domain/use-cases/category.use-cases';
 import { ToastService } from 'src/app/presentation/services/toast.service';
 import { TaskUseCases } from 'src/app/domain/use-cases/task.use-cases';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-new-task',
@@ -60,27 +61,34 @@ export class NewTaskPage {
   private categoryService = inject(CategoryUseCases);
   private taskService = inject(TaskUseCases);
   private toastService = inject(ToastService);
+  private $destroy = new Subject<void>();
   public categoryOptions: Category[] = [];
 
   ionViewWillEnter() {
     this.form.reset();
-    this.categoryService.getCategories().subscribe(categories => {
-      this.categoryOptions = categories;
-    });
-    if (this.id()) {
-      this.taskService.getTaskById(this.id()!).subscribe({
-        next: task => {
-          if (task) {
-            this.form.setValue({
-              name: task.title,
-              category: task.categoryId || '',
-            });
-          }
-        },
-        error: err => {
-          console.error('Error fetching task:', err);
-        },
+    this.categoryService
+      .getCategories()
+      .pipe(takeUntil(this.$destroy))
+      .subscribe(categories => {
+        this.categoryOptions = categories;
       });
+    if (this.id()) {
+      this.taskService
+        .getTaskById(this.id()!)
+        .pipe(takeUntil(this.$destroy))
+        .subscribe({
+          next: task => {
+            if (task) {
+              this.form.setValue({
+                name: task.title,
+                category: task.categoryId || '',
+              });
+            }
+          },
+          error: err => {
+            console.error('Error fetching task:', err);
+          },
+        });
     }
   }
 
@@ -96,28 +104,40 @@ export class NewTaskPage {
   }
 
   private createTask(name: string, category: string) {
-    this.taskService.createTask(name, category).subscribe({
-      next: () => {
-        this.toastService.showToast('Tarea creada exitosamente', 'success');
-        this.router.navigate(['/base/tasks']);
-      },
-      error: err => {
-        this.toastService.showToast('Error al crear la tarea', 'error');
-        console.error('Error creating task:', err);
-      },
-    });
+    this.taskService
+      .createTask(name, category)
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Tarea creada exitosamente', 'success');
+          this.router.navigate(['/base/tasks']);
+        },
+        error: err => {
+          this.toastService.showToast('Error al crear la tarea', 'danger');
+          console.error('Error creating task:', err);
+        },
+      });
   }
 
   private updateTask(id: string, name: string, category: string) {
-    this.taskService.updateTask(id, name, category).subscribe({
-      next: () => {
-        this.toastService.showToast('Tarea actualizada exitosamente', 'success');
-        this.router.navigate(['/base/tasks']);
-      },
-      error: err => {
-        this.toastService.showToast('Error al actualizar la tarea', 'error');
-        console.error('Error updating task:', err);
-      },
-    });
+    this.taskService
+      .updateTask(id, name, category)
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Tarea actualizada exitosamente', 'success');
+          this.router.navigate(['/base/tasks']);
+        },
+        error: err => {
+          this.toastService.showToast('Error al actualizar la tarea', 'danger');
+          console.error('Error updating task:', err);
+        },
+      });
+  }
+
+  ionViewWillLeave() {
+    this.$destroy.next();
+    this.$destroy.complete();
+    this.$destroy = new Subject<void>();
   }
 }

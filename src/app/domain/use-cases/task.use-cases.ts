@@ -33,7 +33,9 @@ export class TaskUseCases {
   createTask(title: string, categoryId?: string): Observable<void> {
     return this.repository.getTasks().pipe(
       switchMap(tasks => {
-        const exists = tasks.some(t => t.title.toLowerCase() === title.toLowerCase());
+        const exists = tasks.some(
+          t => t.title.toLowerCase() === title.toLowerCase() && t.categoryId === categoryId
+        );
 
         if (exists) {
           return throwError(() => new Error('Task already exists'));

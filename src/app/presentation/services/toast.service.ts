@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ToastController } from '@ionic/angular/standalone';
-type typeToast = 'success' | 'error' | 'warning';
+type typeToast = 'success' | 'danger' | 'warning';
 @Injectable({
   providedIn: 'root',
 })

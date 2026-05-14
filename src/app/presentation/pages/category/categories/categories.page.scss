@@ -11,3 +11,8 @@ ion-item {
     color: var(--category-color);
   }
 }
+.category-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

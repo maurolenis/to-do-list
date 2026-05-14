@@ -28,6 +28,7 @@ import { Router } from '@angular/router';
 import { CategoryUseCases } from 'src/app/domain/use-cases/category.use-cases';
 import { ToastService } from 'src/app/presentation/services/toast.service';
 import { NavController } from '@ionic/angular';
+import { Subject, takeUntil } from 'rxjs';
 @Component({
   selector: 'app-new-category',
   templateUrl: './new-category.page.html',
@@ -54,6 +55,7 @@ import { NavController } from '@ionic/angular';
 export class NewCategoryPage {
   public id = input<string>();
   private router = inject(Router);
+  private $destroy = new Subject<void>();
   public form: FormGroup = new FormGroup({
     name: new FormControl('', [Validators.required]),
     icon: new FormControl('', [Validators.required]),
@@ -99,20 +101,23 @@ export class NewCategoryPage {
   ionViewWillEnter() {
     this.form.reset();
     if (this.id()) {
-      this.categoryService.getCategoryById(this.id()!).subscribe({
-        next: category => {
-          if (category) {
-            this.form.setValue({
-              name: category.name,
-              icon: category.icon,
-              color: category.color,
-            });
-          }
-        },
-        error: err => {
-          console.error('Error fetching category:', err);
-        },
-      });
+      this.categoryService
+        .getCategoryById(this.id()!)
+        .pipe(takeUntil(this.$destroy))
+        .subscribe({
+          next: category => {
+            if (category) {
+              this.form.setValue({
+                name: category.name,
+                icon: category.icon,
+                color: category.color,
+              });
+            }
+          },
+          error: err => {
+            console.error('Error fetching category:', err);
+          },
+        });
     }
   }
 
@@ -128,28 +133,40 @@ export class NewCategoryPage {
   }
 
   private createCategory(name: string, icon: string, color: string) {
-    this.categoryService.createCategory(name, icon, color).subscribe({
-      next: () => {
-        this.toastService.showToast('Categoria creada exitosamente', 'success');
-        this.router.navigate(['base/categories']);
-      },
-      error: err => {
-        this.toastService.showToast('Error al crear la categoría', 'error');
-        console.error('Error creating category:', err);
-      },
-    });
+    this.categoryService
+      .createCategory(name, icon, color)
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Categoria creada exitosamente', 'success');
+          this.router.navigate(['base/categories']);
+        },
+        error: err => {
+          this.toastService.showToast('Error al crear la categoría', 'danger');
+          console.error('Error creating category:', err);
+        },
+      });
   }
 
   private updateCategory(id: string, name: string, icon: string, color: string) {
-    this.categoryService.updateCategory(id, name, icon, color).subscribe({
-      next: () => {
-        this.toastService.showToast('Categoría actualizada exitosamente', 'success');
-        this.router.navigate(['base/categories']);
-      },
-      error: err => {
-        this.toastService.showToast('Error al actualizar la categoría', 'error');
-        console.error('Error updating category:', err);
-      },
-    });
+    this.categoryService
+      .updateCategory(id, name, icon, color)
+      .pipe(takeUntil(this.$destroy))
+      .subscribe({
+        next: () => {
+          this.toastService.showToast('Categoría actualizada exitosamente', 'success');
+          this.router.navigate(['base/categories']);
+        },
+        error: err => {
+          this.toastService.showToast('Error al actualizar la categoría', 'danger');
+          console.error('Error updating category:', err);
+        },
+      });
+  }
+
+  ionViewWillLeave() {
+    this.$destroy.next();
+    this.$destroy.complete();
+    this.$destroy = new Subject<void>();
   }
 }

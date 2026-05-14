@@ -35,3 +35,12 @@
     }
   }
 }
+.filter-applied {
+  font-weight: bold;
+}
+
+.category-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

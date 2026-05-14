@@ -6,7 +6,7 @@ const config: CapacitorConfig = {
   webDir: 'www',
   // TODO: Remove this before going to production
   // server: {
-  //   url: 'http://192.168.80.14:8100',
+  //   url: 'http://192.168.80.18:8100',
   //   cleartext: true,
   // },
 };

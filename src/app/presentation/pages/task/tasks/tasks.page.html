@@ -17,11 +17,14 @@
   </ion-fab>
   <div class="ion-padding">
     <ion-button expand="block" fill="outline" id="abrir-filtros">
-      <ion-icon name="options-outline" slot="start"></ion-icon>
+      <ion-icon
+        [name]="filterApplied ? 'filter-outline' :'options-outline'"
+        slot="start"
+      ></ion-icon>
       Filtrar por categoria
     </ion-button>
   </div>
-  @for (item of tasksGroup; track $index) {
+  @for (item of tasksGroupShown; track item.category.id) {
   <ion-card class="category" [style.--category-color]="item.category.color">
     <ion-card-content>
       <ion-accordion-group>
@@ -37,7 +40,7 @@
             <ion-badge>{{item.tasks.length}}</ion-badge>
           </ion-item>
           <div class="ion-padding" slot="content">
-            @for (task of item.tasks; track $index) {
+            @for (task of item.tasks; track task.id) {
 
             <ion-item>
               <ion-checkbox
@@ -62,7 +65,13 @@
       </ion-accordion-group>
     </ion-card-content>
   </ion-card>
+  } @empty {
+  <app-empty-state text="No hay tareas para mostrar, agrega una nueva tarea."></app-empty-state>
   }
+
+  <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+    <ion-infinite-scroll-content></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
 
 <ion-modal trigger="abrir-filtros" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.25, 0.5, 0.75]">
@@ -79,9 +88,13 @@
           <ion-icon name="grid-outline" slot="start"></ion-icon>
           <ion-label>Todas las tareas</ion-label>
         </ion-item>
-        @for (cat of intialData; track $index) {
+        @for (cat of intialData; track cat.category.id) {
 
-        <ion-item button (click)="filterTasksByCategory(cat.category.id)">
+        <ion-item
+          [ngClass]="{ 'filter-applied': filterApplied && cat.category.id === tasksGroup[0]?.category?.id }"
+          button
+          (click)="filterTasksByCategory(cat.category.id)"
+        >
           <ion-icon [name]="cat.category.icon" slot="start"></ion-icon>
           <ion-label>{{ cat.category.name }}</ion-label>
         </ion-item>
