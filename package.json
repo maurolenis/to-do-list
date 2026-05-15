@@ -12,7 +12,15 @@
     "lint": "ng lint",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ios": "ionic cap run ios --livereload --external",
+    "ios:target": "ionic cap run ios --livereload --external --target=\"$TARGET_ID\"",
+    "android": "ionic cap run android --livereload --external",
+    "android:target": "ionic cap run android --livereload --external --target=\"$TARGET_ID\"",
+    "device": "ionic cap run $PLATFORM --livereload --external --target=\"$TARGET_ID\"",
+    "build:demo": "ng build && npx cap sync",
+    "apk:debug": "npm run build:demo && cd android && ./gradlew assembleDebug && cd .. && echo '\n✅ APK en: android/app/build/outputs/apk/debug/app-debug.apk'",
+    "ios:demo": "npm run build:demo && npx cap open ios"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +40,8 @@
     "@capacitor/keyboard": "8.0.3",
     "@capacitor/status-bar": "8.0.2",
     "@ionic/angular": "^8.0.0",
+    "@ionic/storage-angular": "^4.0.0",
+    "firebase": "^12.13.0",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

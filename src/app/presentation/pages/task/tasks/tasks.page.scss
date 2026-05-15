@@ -1,0 +1,46 @@
+.category {
+  --background: var(--category-color);
+  ion-badge {
+    background: var(--category-color);
+    color: white;
+  }
+  ion-card-content {
+    background: color-mix(in srgb, var(--category-color) 10%, white);
+  }
+
+  ion-accordion {
+    ion-item[slot='header'] {
+      --background: color-mix(in srgb, var(--category-color) 10%, white);
+    }
+
+    div[slot='content'] {
+      background: color-mix(in srgb, var(--category-color) 10%, white);
+      // padding: 16px; // Agrega padding manual
+      // border: 1px solid color-mix(in srgb, var(--category-color) 10%, white);
+      // border-radius: 8px;
+      ion-item {
+        --background: color-mix(in srgb, var(--category-color) 10%, white);
+      }
+    }
+    ion-icon.avatar {
+      --ion-color-base: var(--category-color);
+      color: var(--category-color);
+    }
+    ion-label.category-name {
+      color: var(--category-color);
+    }
+    ion-label.completed {
+      text-decoration: line-through;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+.filter-applied {
+  font-weight: bold;
+}
+
+.category-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
